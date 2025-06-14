@@ -1,0 +1,40 @@
+@startuml
+title Процесс регистрации нового пользователя Администратором
+
+actor Администратор as admin
+participant UI as ui
+participant "API Getaway" as api
+participant "MS Employee" as msE
+database "DB PostgreSQL" as db
+queue "Apache Kafka" as kafka
+
+
+admin -> ui: Ввести данные о новом пользователе\nи нажать кнопку Сохранить
+ui -> api: POST /employees
+api -> msE: POST /employees
+
+
+alt Ошибка сервера
+  msE --> api: Ошибка сервера
+  api --> ui: Ошибка сервера
+  ui --> admin: Ошибка, что-то пошло не так,\nповторите попытку
+
+else Успешная регистрация
+msE -> msE: Сгенерировать пароль, хэшировать\nчувствительные данные
+msE -> db: Добавление данных нового пользователя
+  db --> msE: OK + body
+
+  
+
+ 
+    msE-> kafka: отправить сообщение с паролем
+    ref over kafka: Kafka 2.2.1 Приветственное письмо сотруднику с паролем
+kafka-->msE: подтверждение записи
+      msE --> api: OK + body
+
+
+  api --> ui: OK + body
+  ui --> admin: Отобразить страницу\nпользователя в режиме просмотра
+
+end alt
+@enduml
