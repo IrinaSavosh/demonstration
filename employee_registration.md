@@ -49,32 +49,26 @@ end alt
 sequenceDiagram
     title Процесс регистрации нового пользователя Администратором
 
-    actor Администратор as admin
-    participant UI as ui
-    participant "API Getaway" as api
-    participant "MS Employee" as msE
-    participant "DB PostgreSQL" as db
-    participant "Apache Kafka" as kafka
 
-    admin ->> ui: Ввести данные о новом пользователе\nи нажать кнопку Сохранить
-    ui ->> api: POST /employees
-    api ->> msE: POST /employees
+    Администратор ->> UI: Ввести данные о новом пользователе\nи нажать кнопку Сохранить
+    UI ->> "API Getaway": POST /employees
+    "API Getaway" ->> "MS Employee": POST /employees
 
     alt Ошибка сервера
-        msE -->> api: Ошибка сервера
-        api -->> ui: Ошибка сервера
-        ui -->> admin: Ошибка, что-то пошло не так,\nповторите попытку
+        "MS Employee" -->> "API Getaway": Ошибка сервера
+        "API Getaway" -->> UI: Ошибка сервера
+        UI -->> Администратор: Ошибка, что-то пошло не так,\nповторите попытку
     else Успешная регистрация
-        msE ->> msE: Сгенерировать пароль, хэшировать\nчувствительные данные
-        msE ->> db: Добавление данных нового пользователя
-        db -->> msE: OK + body
+        "MS Employee" ->> "MS Employee": Сгенерировать пароль, хэшировать\nчувствительные данные
+        "MS Employee" ->> "DB PostgreSQL": Добавление данных нового пользователя
+        "DB PostgreSQL" -->> "MS Employee": OK + body
         
-        msE ->> kafka: отправить сообщение с паролем
-        Note over kafka: Kafka 2.2.1 Приветственное письмо сотруднику с паролем
-        kafka -->> msE: подтверждение записи
-        msE -->> api: OK + body
+        "MS Employee" ->> "Apache Kafka": отправить сообщение с паролем
+        Note over "Apache Kafka": Kafka 2.2.1 Приветственное письмо сотруднику с паролем
+        "Apache Kafka" -->> "MS Employee": подтверждение записи
+        "MS Employee" -->> "API Getaway": OK + body
         
-        api -->> ui: OK + body
-        ui -->> admin: Отобразить страницу\nпользователя в режиме просмотра
+        "API Getaway" -->> UI: OK + body
+        UI -->> Администратор: Отобразить страницу\nпользователя в режиме просмотра
     end
 ```
