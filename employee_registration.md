@@ -42,7 +42,7 @@ info:
   description: API для создания нового пользователя Администратором
   version: 1.0.0
 servers:
-  - url: https://host.ru/api/employees/v1.0
+  - url: https://host.ru/api/microservice/v1.0
 tags:
   - name: Admin
     description: Операции доступные для администратора
