@@ -42,7 +42,7 @@ info:
   description: API для создания нового пользователя Администратором
   version: 1.0.0
 servers:
-  - url: https://host.ru/api/auth/v1.0
+  - url: https://host.ru/api/employees/v1.0
 tags:
   - name: Admin
     description: Операции доступные для администратора
@@ -93,12 +93,12 @@ paths:
                 createPass:
                   type: string
                 mainRole:
-                  type: integer
+                  type: string
                   description: Идентификатор основной роли, выбираемой из списка ролей
                 additionalRoles:
                   type: array
                   items:
-                    type: integer
+                    type: string
                     description: Идентификаторы дополнительных ролей
               required:
                 - firstName
@@ -150,17 +150,10 @@ paths:
                     type: string
                     format: uuid
                     description: Уникальный идентификатор созданного сотрудника
-                  photoUrl:
-                    type: string
-                    format: uri
-                    description: |
-                      URL для последующей загрузки фотографии.
-                      Используйте PUT {photoUrl} с multipart/form-data.
               example:
                 status: "201"
                 message: "Сотрудник создан"
                 employeeId: "550e8400-e29b-41d4-a716-446655440000"
-                photoUrl: "https://host.ru/auth/v1.0/employees/550e8400-e29b-41d4-a716-446655440000/photo"
         '400':
           description: Ошибки неверного запроса
           content:
@@ -188,21 +181,6 @@ paths:
                   message:
                     type: string
                     example: "Операция заблокирована"
-
-        '404':
-          description: Ресурс не найден
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: "404"
-                  message:
-                    type: string
-                    example: "Запрашиваемый ресурс не найден"
-
         '500':
           description: Внутренняя ошибка сервера
           content:
@@ -236,10 +214,9 @@ paths:
 | 12 | divisionCode          | string          | +              | Body      | Код подразделения                 | 123-456                          | `Passport.division_code`       |
 | 13 | registrationAddress   | string          |                | Body      | Адрес регистрации                 | г. Москва, ул. Примерная, д. 1   | `Passport.registration_address`|
 | 14 | createDate            | string          | +              | Body      | Дата выдачи паспорта              | 2025-02-25                       | `Passport.create_date`         |
-| 15 | mainRole              | number          | +              | Body      | Основная роль пользователя        | 1                                | `Role.role_id`                 |
-| 16 | additionalRoles       | array[number]   |                | Body      | Дополнительные роли               | [2,3]                            | `Role.role_id`                 |
-| 17 | managerId             | string (UUID)   | +              | Body      | ID администратора                 | 550e8400-e29b-41d4-a716-446655440000 | `Employee.manager_id`         |
-| 18 | file                  | binary          | +              | Form-Data | Файл фотографии (jpeg/png) ≤5MB   | -                                | `employee_photos.photo_data`   |
+| 15 | mainRole              | string          | +              | Body      | Основная роль пользователя        | 1                                | `Role.role_id`                 |
+| 16 | additionalRoles       | array[string]   |                | Body      | Дополнительные роли               | [2,3]                            | `Role.role_id`                 |
+
 
 **Примечания:**
 1. Для дат используется формат `YYYY-MM-DD`
@@ -340,7 +317,7 @@ paths:
 		"additionalRoles": {
             "type": "array",
 			"items": {
-				"type": "integer",
+				"type": "string",
 				"description": "Идентификатор дополнительной роли пользователя"
 				},
  			"description": "Список идентификаторов дополнительных ролей, выбираемых из списка ролей"
@@ -384,7 +361,7 @@ paths:
 | № | Параметр | Описание           | Тип данных | Обязательность | Варианты значений                                                                 |
 |---|----------|--------------------|------------|----------------|-----------------------------------------------------------------------------------|
 | 1 | status   | Статус-код ответа  | string     | +              | `400` - BAD REQUEST<br>`409` - CONFLICT<br>`500` - INTERNAL SERVER ERROR          |
-| 2 | message  | Описание ошибки    | string     | +              | `400`: Некорректный запрос<br>`409`: Пользователь существует<br>`500`: Ошибка сервера |
+| 2 | message  | Описание ошибки    | string     | +              | `400`: Некорректный запрос. Проверьте параметры<br>`409`: Пользователь существует<br>`500`: Ошибка сервера |
 
 ## Особенности обработки ошибок
 1. Все ошибки возвращают HTTP-статус код, соответствующий типу ошибки
