@@ -348,7 +348,6 @@ paths:
     "required": ["firstName", "lastName", "birthday", "startDate", "positionId", "email", "phoneNumber", "series", "numberPass", "issuedBy", "divisionCode", "registrationAddress", "createPass", "mainRole"]
 }
 ```
-# Документация API: Создание пользователя
 
 ## Успешный ответ
 **Статус:** `201 Created`
@@ -370,7 +369,7 @@ paths:
 1. **Код 201** - ресурс успешно создан
 2. ID генерируется системой автоматически
 
-# Документация API: Обработка ошибок
+# Обработка ошибок
 
 ## Пример ответа при ошибке
 ```json
