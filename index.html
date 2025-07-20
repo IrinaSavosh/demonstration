@@ -1,0 +1,19 @@
+<!-- Пример index.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@4/swagger-ui.css">
+</head>
+<body>
+    <h1>привет, это мой код </h1>
+  <div id="swagger-ui"></div>
+  <script src="https://unpkg.com/swagger-ui-dist@4/swagger-ui-bundle.js"></script>
+  <script>
+    SwaggerUIBundle({
+      url: 'https://petstore.swagger.io/v2/swagger.json', // Путь к твоей спецификации
+      dom_id: '#swagger-ui'
+    });
+  </script>
+
+</body>
+</html>
